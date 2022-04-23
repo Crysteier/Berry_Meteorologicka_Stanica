@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>POIT</title>
+    <style type="text/css">           
+    </style>
+    <script src="static/libs/jquery-1.11.1.min.js"></script>
+    <script src="static/libs/plotly-latest.min.js"></script>
+
+  <script>
+   $(document).ready(function(){
+    var layout = {
+          title: 'Output variable',
+          xaxis: {
+            title: 'time',
+            range: [0,20]
+          },
+          yaxis: {
+            title: 'ys(t)',
+            range: [-1,1]
+          }
+        };
+	$('form#record').submit(function(event) {
+		var $link = "dbdata/"+$('#value').val();
+     console.log($link)
+    $.ajax({
+      type: "POST",
+      url: $link,
+      success:function(data) 
+      { console.log(data);  
+        data = JSON.parse(data);
+        console.log(data);    
+        n = Object.keys(data).length;
+        console.log(n);
+        
+        xl = [];
+        yl = [];
+        zl = [];
+
+        for (var i=0; i< n; i++){
+          xl.push(data[i].x);
+          yl.push(data[i].y);
+          zl.push(data[i].z);
+          }
+        trace = {
+            x: xl,
+            y: yl 
+            };
+        tracek = {
+            x: xl,
+            y: zl 
+            };
+        console.log(trace);    
+        var tracel = new Array();
+        tracel.push(trace,tracek);  
+        Plotly.newPlot($('#plotdiv')[0], tracel, layout);
+                 
+      }
+    }).done(function( o ) {
+       // do something
+    });
+    return false; });    
+   });   
+
+  </script>
+</head>
+<body>
+ <form id="record" method="POST" action='#'>
+    <input type="text" name="value" id="value" placeholder="Record No">
+    <input type="submit" value="Set">
+  </form>
+    <div id="plotdiv" style="width:600px;height:250px;"></div>
+      
+</body>
+</html> 
