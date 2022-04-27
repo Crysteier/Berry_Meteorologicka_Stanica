@@ -75,7 +75,7 @@ def background_thread(args):
             print(fuj)
             cursor = db.cursor()
             #cursor.execute("SELECT MAX(id) FROM graph")
-            maxid = cursor.fetchone()cd 
+            maxid = cursor.fetchone()
             #cursor.execute("INSERT INTO graph (id, hodnoty) VALUES (%s, %s)", (maxid[0] + 1, fuj))
             #db.commit()
           dataList = []
