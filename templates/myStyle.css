@@ -1,0 +1,48 @@
+body {
+    background-color: rgb(226, 242, 245);
+}
+
+.container {
+    margin: 25px;
+    padding: 15px;
+    position: relative;
+    border: 3px solid rgb(91, 189, 35);
+}
+
+.center {
+    position: relative;
+    text-align: center;
+}
+
+.welcomeButton {
+    height: 100%;
+    width: 100%;
+    background-color: rgb(85, 190, 194);
+    position: fixed;
+    text-align: center;
+}
+
+.paddingAround {
+    padding: 10px;
+}
+
+#log {
+    margin-bottom: 20px;
+}
+
+#designData {
+    display: none;
+}
+
+#lowerButton {
+    top: 100px;
+    position: relative;
+}
+
+#startButton {
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-weight: bold;
+}
