@@ -56,33 +56,34 @@ def background_thread(args):
         #print A
         #print dbV 
         print(args)  
-        socketio.sleep(1)
+        socketio.sleep(4)
         count += 1
         dataCounter +=1
         cas = time.time()
         temperature,pressure = get_sensor_data()
         if dbV == 'start':
           dataDict = {
-            "t": time.time(),
+            "t": cas,
             "x": temperature,
             "y": pressure,
           }
           dataList.append(dataDict)
+          socketio.emit('my_response',
+                      {'dataTemp': temperature, 'dataPres': pressure,'count': count},
+                      namespace='/test') 
         else:
           if len(dataList)>0:
             print (str(dataList))
             fuj = str(dataList).replace("'", "\"")
-            print(fuj)
-            cursor = db.cursor()
+            count = 0
+            #cursor = db.cursor()
             #cursor.execute("SELECT MAX(id) FROM graph")
-            maxid = cursor.fetchone()
+            #maxid = cursor.fetchone()
             #cursor.execute("INSERT INTO graph (id, hodnoty) VALUES (%s, %s)", (maxid[0] + 1, fuj))
             #db.commit()
           dataList = []
           dataCounter = 0
-        socketio.emit('my_response',
-                      {'dataTemp': temperature, 'dataPres': pressure,'count': count},
-                      namespace='/test')  
+         
     db.close()
 
 @app.route('/')
@@ -121,6 +122,7 @@ def test_message(message):
 def db_message(message):   
 #    session['receive_count'] = session.get('receive_count', 0) + 1 
     session['db_value'] = message['value']    
+    print(session['db_value'])
 #    emit('my_response',
 #         {'data': message['value'], 'count': session['receive_count']})
 

@@ -2,15 +2,15 @@
 <html>
 
 <head>
-  <link rel="stylesheet" href="myStyle.css">
+  <link rel="stylesheet" href="static/myStyle.css">
 
   <title>Meteorologicka stanicka</title>
   <script src="static/libs/jquery-3.2.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.5/socket.io.min.js"></script>
-  <script src="static/libs/jquery-3.2.1.min.js"></script>
   <script src="static/libs/jquery-ui.min.js"></script>
   <script src="static/libs/plotly-latest.min.js"></script>
-  <script src="myScript.js"></script>
+  <script src="static/libs/gauge.min.js"></script>
+  <script src="static/myScript.js"></script>
   <link rel="stylesheet" href="static/libs/jquery-ui.min.css">
 
 </head>
@@ -31,6 +31,7 @@
         <input type="text" name="emit_value" id="emit_value" placeholder="Amplituda">
         <input type="submit" value="Echo">
       </form>
+      
       <div class="paddingAround">
         <button id="buttonVal" type="submit" value="start">Start</button>
         <form id="disconnect" method="POST" action="#">
@@ -39,22 +40,28 @@
       </div>
       <div id="tabs">
         <ul>
-          <li><a href="#tabs-1">vypocty</a></li>
-          <li><a href="#tabs-2">graf</a></li>
-          <li><a href="#tabs-3">cifernik</a></li>
+          <li><a href="#tabs-1">Data</a></li>
+          <li><a href="#tabs-2">Graf</a></li>
+          <li><a href="#tabs-3">Cifernik</a></li>
         </ul>
         <div id="tabs-1">
+          <h2>Data zo sensoru:</h2>
+          <div id="log"></div>
         </div>
         <div id="tabs-2">
-          <div id="plotdiv" style="width:600px;height:250px;"></div>
+          <div class="center">
+            <button id="tempsButton" type="submit">Teplota</button>
+            <button id="pressButton" type="submit">Tlak</button>
+          </div>
+          <div id="plotdivTemp" style="width:600px;height:250px;"></div>
+          <div id="plotdivPress" style="width:600px;height:250px;"></div>
         </div>
         <div id="tabs-3">
           <canvas id="canvasID"></canvas>
         </div>
       </div>
 
-      <h2>Data zo sensoru:</h2>
-      <div id="log"></div>
+      
     </div>
   </div>
 

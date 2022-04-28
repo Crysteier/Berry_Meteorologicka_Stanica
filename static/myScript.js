@@ -13,7 +13,7 @@ $(document).ready(function () {
     });
 
     socket.on('my_response', function (msg) {
-        console.log(msg.data);
+        
         $('#log').append('Received #' + msg.count + ': ' + msg.dataTemp + ': ' + msg.dataPres + '<br>').html();
     });
 
@@ -23,7 +23,7 @@ $(document).ready(function () {
     });
 
     $('#buttonVal').click(function (event) {
-        console.log($('#buttonVal').val());
+        
         socket.emit('db_event', { value: $('#buttonVal').val() });
         if ($(this).val() == "start") {
             $(this).val("stop");
@@ -40,19 +40,13 @@ $(document).ready(function () {
         socket.emit('disconnect_request');
         return false;
     });
+    
+    $('#plotdivTemp').css('display','block');
+    $('#plotdivPress').css('display','none');
 
 });
 //-------------- TESTING -----------------------------------------------------
 let ind = 1;
-
-setInterval(function () {
-
-    let temp = Math.floor((Math.random() * 50) + 1)
-    let press = Math.floor((Math.random() * 100) + 1)
-
-    $('#log').html('Received #' + ind + ': ' + temp + ' C  -- ' + press + ' hPa' + '<br>').html();
-    ind++;
-}, 1000);
 
 function showBody() {
     var dataDiv = document.getElementById("designData");
@@ -77,8 +71,8 @@ $(document).ready(function () {
     });
 
     socket.on('my_response', function (msg) {
-        console.log(msg.dataTemp);
-        $('#log2').append('Received #' + msg.count + ': ' + 'temp: ' + msg.dataTemp + ' pressure: ' + msg.dataPres + '<br>').html();
+        
+        //$('#log2').append('Received #' + msg.count + ': ' + 'temp: ' + msg.dataTemp + ' pressure: ' + msg.dataPres + '<br>').html();
         x.push(parseFloat(msg.count));
         y.push(parseFloat(msg.dataTemp));
         y2.push(parseFloat(msg.dataPres));
@@ -102,11 +96,56 @@ $(document).ready(function () {
                 //range: [-1,1]
             }
         };
-        console.log(trace);
+        //console.log(trace);
         var traces = new Array();
-        traces.push(trace, trace2);
-        Plotly.newPlot($('#plotdiv')[0], traces, layout);
+        traces.push(trace);
+        Plotly.newPlot($('#plotdivTemp')[0], traces, layout);
         //addTraces               
+    });
+    
+    socket.on('my_response', function (msg) {
+        
+        //$('#log2').append('Received #' + msg.count + ': ' + 'temp: ' + msg.dataTemp + ' pressure: ' + msg.dataPres + '<br>').html();
+        x.push(parseFloat(msg.count));
+        y.push(parseFloat(msg.dataTemp));
+        y2.push(parseFloat(msg.dataPres));
+        trace = {
+            x: x,
+            y: y,
+            name: 'Temp'
+        };
+        trace2 = {
+            x: x,
+            y: y2,
+            name: 'Press'
+        };
+        layout = {
+            title: 'Data',
+            xaxis: {
+                title: 'x',
+            },
+            yaxis: {
+                title: 'y',
+                //range: [-1,1]
+            }
+        };
+        //console.log(trace);
+        var traces = new Array();
+        traces.push(trace2);
+        Plotly.newPlot($('#plotdivPress')[0], traces, layout);
+        //addTraces          
+             
+    });
+    
+    $('#tempButton').click(function (event) {
+        $('#plotdivTemp').css('display','block');
+        $('#plotdivPress').css('display','none');
+    });
+    
+    $('#tempPress').click(function (event) {
+        $('#plotdivTemp').css('display','none');
+        $('#plotdivPress').css('display','block');
+        console.log('MUKODJELGECII');
     });
 
     $('form#emit').submit(function (event) {
@@ -175,31 +214,11 @@ $(document).ready(function () {
     gauge.draw();
     gauge.value = "0";
 
-
     namespace = '/test';
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
 
     socket.on('connect', function () {
         socket.emit('my_event', { data: 'I\'m connected!', value: 1 });
     });
-
-    socket.on('my_response', function (msg) {
-        console.log(msg.dataTemp);
-        $('#log3').append('Received #' + msg.count + ': ' + msg.dataTemp + '<br>').html();
-        gauge.value = msg.dataTemp;
-    });
-
-    $('form#emit').submit(function (event) {
-        socket.emit('my_event', { value: $('#emit_value').val() });
-        return false;
-    });
-    $('#buttonVal').click(function (event) {
-        //console.log($('#buttonVal').val());
-        socket.emit('click_event', { value: $('#buttonVal').val() });
-        return false;
-    });
-    $('form#disconnect').submit(function (event) {
-        socket.emit('disconnect_request');
-        return false;
-    });
+    
 });
