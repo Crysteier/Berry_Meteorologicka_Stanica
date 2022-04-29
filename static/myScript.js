@@ -13,8 +13,11 @@ $(document).ready(function () {
     });
 
     socket.on('my_response', function (msg) {
-        
-        $('#log').append('Received #' + msg.count + ': ' + msg.dataTemp + ': ' + msg.dataPres + '<br>').html();
+        if(msg.count > -1 ){
+        $('#log').append('Received #' + msg.count + ': ' + msg.dataTemp + 'C ' + msg.dataPres +'hPa' +'<br>').html();
+    }else{
+        $('#log').append(msg.data).html();
+        }
     });
 
     $('form#emit').submit(function (event) {
@@ -37,6 +40,14 @@ $(document).ready(function () {
     });
 
     $('form#disconnect').submit(function (event) {
+        var dataDiv = document.getElementById("designData");
+        var buttonDiv = document.getElementById("welcomeParent");
+        var buttonWelcome = document.getElementById("startButton");
+        dataDiv.style.display = "none";
+        buttonDiv.style.display = "block";
+        buttonWelcome.style.display = "none";
+        document.body.style.backgroundColor="black";
+        buttonDiv.style.backgroundColor="black";
         socket.emit('disconnect_request');
         return false;
     });
@@ -54,6 +65,20 @@ function showBody() {
     dataDiv.style.display = "block";
     buttonDiv.style.display = "none";
 }
+
+function showTempGraf(){
+    var plotTemp = document.getElementById("plotdivTemp");
+    var plotPres = document.getElementById("plotdivPress");
+    plotTemp.style.display="block";
+    plotPres.style.display="none";
+    }
+    
+function showPressGraf(){
+    var plotTemp = document.getElementById("plotdivTemp");
+    var plotPres = document.getElementById("plotdivPress");
+    plotTemp.style.display="none";
+    plotPres.style.display="block";
+    }
 
 //-------------- GRAFY----------------------------------
 $(document).ready(function () {
@@ -87,7 +112,7 @@ $(document).ready(function () {
             name: 'Press'
         };
         layout = {
-            title: 'Data',
+            title: 'Teplota',
             xaxis: {
                 title: 'x',
             },
@@ -120,7 +145,7 @@ $(document).ready(function () {
             name: 'Press'
         };
         layout = {
-            title: 'Data',
+            title: 'Tlak',
             xaxis: {
                 title: 'x',
             },
@@ -136,17 +161,7 @@ $(document).ready(function () {
         //addTraces          
              
     });
-    
-    $('#tempButton').click(function (event) {
-        $('#plotdivTemp').css('display','block');
-        $('#plotdivPress').css('display','none');
-    });
-    
-    $('#tempPress').click(function (event) {
-        $('#plotdivTemp').css('display','none');
-        $('#plotdivPress').css('display','block');
-        console.log('MUKODJELGECII');
-    });
+   
 
     $('form#emit').submit(function (event) {
         socket.emit('my_event', { value: $('#emit_value').val() });
@@ -157,10 +172,7 @@ $(document).ready(function () {
         socket.emit('click_event', { value: $('#buttonVal').val() });
         return false;
     });
-    $('form#disconnect').submit(function (event) {
-        socket.emit('disconnect_request');
-        return false;
-    });
+
 });
 
 //----------------------CIFERNIK--------------------------------
@@ -215,10 +227,23 @@ $(document).ready(function () {
     gauge.value = "0";
 
     namespace = '/test';
-    var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+      var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
 
-    socket.on('connect', function () {
-        socket.emit('my_event', { data: 'I\'m connected!', value: 1 });
-    });
-    
+      socket.on('connect', function() {
+        socket.emit('my_event', {data: 'I\'m connected!', value: 1}); });
+
+      socket.on('my_response', function(msg) {
+                
+        gauge.value = msg.dataTemp;                
+        });
+
+      $('form#emit').submit(function(event) {
+          socket.emit('my_event', {value: $('#emit_value').val()});
+          return false; });
+      $('#buttonVal').click(function(event) {
+          //console.log($('#buttonVal').val());
+          socket.emit('click_event', {value: $('#buttonVal').val()});
+          return false; 
+          });
+
 });
