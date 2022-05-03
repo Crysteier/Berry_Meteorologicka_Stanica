@@ -50,25 +50,31 @@ def background_thread(args):
         if args:
           A = dict(args).get('A')
           dbV = dict(args).get('db_value')
+          limV = dict(args).get('limit_value')
         else:
           A = 1
           dbV = 'nieco'  
-        #print A
-        #print dbV 
+          limV = -100
+        
+        if limV is None:
+            limV=-100
+        print(limV)  
         print(args)  
         socketio.sleep(4)
         count += 1
         dataCounter +=1
         cas = time.time()
         temperature,pressure = get_sensor_data()
+        limV = float(limV)
         if dbV == 'start':
-          dataDict = {
-            "t": cas,
-            "x": temperature,
-            "y": pressure,
-          }
-          dataList.append(dataDict)
-          socketio.emit('my_response',
+            if temperature >= limV:
+                dataDict = {
+                "t": cas,
+                "x": temperature,
+                "y": pressure,
+                }
+                dataList.append(dataDict)
+                socketio.emit('my_response',
                       {'dataTemp': temperature, 'dataPres': pressure,'count': count},
                       namespace='/test') 
         else:
@@ -104,7 +110,11 @@ def readDataFile(num):
 @app.route('/graph', methods=['GET', 'POST'])
 def graph():
     return render_template('graph.html', async_mode=socketio.async_mode)
-    
+
+@app.route('/graphdva', methods=['GET', 'POST'])
+def graphdva():
+    return render_template('graphdva.html', async_mode=socketio.async_mode)
+        
 @app.route('/db')
 def db():
   db = MySQLdb.connect(host=myhost,user=myuser,passwd=mypasswd,db=mydb)
@@ -113,7 +123,7 @@ def db():
   rv = cursor.fetchall()
   return str(rv)    
 
-@app.route('/dbdata/<string:num>', methods=['GET', 'POST'])
+@app.route('/dbdata/<string:num>', methods=['POST'])
 def dbdata(num):
   db = MySQLdb.connect(host=myhost,user=myuser,passwd=mypasswd,db=mydb)
   cursor = db.cursor()
@@ -122,17 +132,17 @@ def dbdata(num):
   rv = cursor.fetchone()
   return str(rv[0])
     
-# ~ @socketio.on('my_event', namespace='/test')
-# ~ def test_message(message):   
-    # ~ session['receive_count'] = session.get('receive_count', 0) + 1 
-    # ~ session['A'] = message['value']    
-    # ~ emit('my_response',
-         # ~ {'data': message['value'], 'count': session['receive_count']})
 
 @socketio.on('db_event', namespace='/test')
 def db_message(message):   
     session['db_value'] = message['value']    
     print(session['db_value'])
+
+@socketio.on('limit_event', namespace='/test')
+def db_message(message):   
+    session['limit_value'] = message['value']    
+    print(session['limit_value'])
+
 
 @socketio.on('disconnect_request', namespace='/test')
 def disconnect_request():

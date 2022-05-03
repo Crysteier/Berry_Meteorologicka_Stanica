@@ -10,12 +10,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.5/socket.io.min.js"></script>
   <script src="static/libs/jquery-ui.min.js"></script>
   <script src="static/libs/plotly-latest.min.js"></script>
-<!--
-  <script src="static/libs/gauge.min.js"></script>
--->
-<!--
-  <script src="static/myScript.js"></script>
--->
+
   <link rel="stylesheet" href="static/libs/jquery-ui.min.css">
 
   <script>
@@ -32,7 +27,7 @@
           }
         };
 	$('form#record').submit(function(event) {
-		var $link = "dbdata/"+$('#value').val();
+		var $link = "read/"+$('#value').val();
      console.log($link)
     $.ajax({
       type: "POST",
@@ -83,7 +78,7 @@
     <input type="submit" value="Set">
   </form>
     <div id="plotdiv" style="width:600px;height:250px;"></div>
-        <h2>Data zo databazy:</h2>
+        <h2>Data zo suboru:</h2>
           <div id="logg"></div>
 </body>
 </html> 

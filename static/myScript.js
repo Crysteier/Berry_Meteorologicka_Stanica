@@ -20,14 +20,9 @@ $(document).ready(function () {
         }
     });
 
-    $('form#emit').submit(function (event) {
-        socket.emit('my_event', { value: $('#emit_value').val() });
-        return false;
-    });
-
     $('#buttonVal').click(function (event) {
-        
-        socket.emit('db_event', { value: $('#buttonVal').val() });
+        socket.emit('db_event', { value: $('#buttonVal').val() 
+        });
         if ($(this).val() == "start") {
             $(this).val("stop");
             $(this).text("Stop");
@@ -38,7 +33,16 @@ $(document).ready(function () {
         }
         return false;
     });
-
+  
+   $('#limitSet').click(function (event) {
+       var limit = document.getElementById("valueLim").value;
+       console.log(limit);
+       if(limit == null){
+           limit = -100;
+        }
+        socket.emit('limit_event', { value: limit });
+    });
+    
     $('form#disconnect').submit(function (event) {
         var dataDiv = document.getElementById("designData");
         var buttonDiv = document.getElementById("welcomeParent");
@@ -56,8 +60,10 @@ $(document).ready(function () {
     $('#plotdivPress').css('display','none');
 
 });
-//-------------- TESTING -----------------------------------------------------
+//-------------- BODY -----------------------------------------------------
 let ind = 1;
+
+
 
 function showBody() {
     var dataDiv = document.getElementById("designData");
@@ -96,8 +102,6 @@ $(document).ready(function () {
     });
 
     socket.on('my_response', function (msg) {
-        
-        //$('#log2').append('Received #' + msg.count + ': ' + 'temp: ' + msg.dataTemp + ' pressure: ' + msg.dataPres + '<br>').html();
         x.push(parseFloat(msg.count));
         y.push(parseFloat(msg.dataTemp));
         y2.push(parseFloat(msg.dataPres));
@@ -129,8 +133,6 @@ $(document).ready(function () {
     });
     
     socket.on('my_response', function (msg) {
-        
-        //$('#log2').append('Received #' + msg.count + ': ' + 'temp: ' + msg.dataTemp + ' pressure: ' + msg.dataPres + '<br>').html();
         x.push(parseFloat(msg.count));
         y.push(parseFloat(msg.dataTemp));
         y2.push(parseFloat(msg.dataPres));
@@ -247,3 +249,5 @@ $(document).ready(function () {
           });
 
 });
+
+
